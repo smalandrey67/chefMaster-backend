@@ -3,6 +3,8 @@ import cors from "cors";
 import * as dotenv from "dotenv";
 
 import { recipesRouter } from "./routes/recipes.route.js";
+import { articlesRoute } from "./routes/articles.route.js";
+
 import { connectDB } from "./config/connectDB.js";
 
 dotenv.config();
@@ -16,6 +18,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
 app.use("/api", recipesRouter);
+app.use("/api", articlesRoute);
 
 connectDB().then(() => {
 	app.listen(PORT, () => {
