@@ -1,12 +1,15 @@
 import { articlesService } from "../services/articles.service.js";
+import { statuses } from "../config/statuses.config.js";
 
 export const articlesController = {
-	async getAllArticles(_, res) {
+	async getAllArticles(req, res) {
 		try {
-			const articles = await articlesService.getAllArticles();
-			res.json(articles);
+			const limit = req.query._limit;
+
+			const articles = await articlesService.getAllArticles(limit);
+			res.status(statuses.OK).json(articles);
 		} catch (error) {
-			res.status(500).json({ message: error.message });
+			res.status(statuses.SERVER_ERROR).json({ message: error.message });
 		}
 	}
 };
