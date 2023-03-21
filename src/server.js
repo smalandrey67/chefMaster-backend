@@ -1,8 +1,9 @@
 import express from "express";
 import cors from "cors";
 
-import { mongoConnect } from "./utils/mongo.utility.js";
+import { mongoConnect } from "./utils/mongoConnect.js";
 import { appConfig } from "./config/app.config.js";
+import { errorHandler } from "./middleware/errorHandler.middleware.js";
 
 import { appRouter } from "./routes/app.route.js";
 
@@ -15,6 +16,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
 app.use("/api", appRouter);
+
+app.use(errorHandler);
 
 mongoConnect().then(() => {
 	app.listen(PORT, () => {

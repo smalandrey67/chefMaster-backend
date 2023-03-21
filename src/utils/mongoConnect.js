@@ -3,10 +3,10 @@ import { appConfig } from "../config/app.config.js";
 
 export const mongoConnect = async () => {
 	try {
-		await mongoose.connect(appConfig.DB_URL);
+		await mongoose.connect(appConfig.DB_URL + appConfig.DB_NAME);
 		console.log("mongodb was successfully connected");
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		process.exit(1);
 	}
 };

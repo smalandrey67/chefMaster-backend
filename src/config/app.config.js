@@ -5,5 +5,6 @@ dotenv.config();
 export const appConfig = {
 	PORT: process.env.PORT || 8080,
 	HOST: process.env.HOST,
-	DB_URL: process.env.DB_URL
+	DB_URL: process.env.DB_URL,
+	DB_NAME: process.env.DB_NAME
 };

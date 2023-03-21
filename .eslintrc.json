@@ -26,6 +26,7 @@
 		],
 		"no-else-return": "error",
 		"arrow-spacing": "error",
+		"no-unused-vars": "warn",
 		"no-duplicate-imports": "error"
 	}
 }
