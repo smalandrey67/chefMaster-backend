@@ -1,5 +1,7 @@
 import { recipesService } from "../services/recipes.service.js";
-import { statuses } from "../config/statuses.config.js";
+import { statuses } from "../constants/httpStatuses.constants.js";
+
+import { messages } from "../constants/errorMessages.constants.js";
 import { ApiError } from "../config/apiError.config.js";
 
 export const recipesController = {
@@ -7,7 +9,7 @@ export const recipesController = {
 		const popularRecipes = await recipesService.getPopularRecipes();
 
 		if (!popularRecipes) {
-			throw new ApiError(statuses.SERVER_ERROR, "Subscription not found");
+			throw ApiError.ServerError(messages.SUBSCRIPTION_NOT_FOUND);
 		}
 
 		res.status(statuses.OK).json(popularRecipes);
@@ -19,7 +21,7 @@ export const recipesController = {
 		const recipesByCategory = await recipesService.getRecipesByCategory(category);
 
 		if (!recipesByCategory) {
-			throw new ApiError(statuses.SERVER_ERROR, "Subscription not found");
+			throw ApiError.ServerError(messages.SUBSCRIPTION_NOT_FOUND);
 		}
 
 		res.status(statuses.OK).json(recipesByCategory);
@@ -31,7 +33,7 @@ export const recipesController = {
 		const recipeDetails = await recipesService.getRecipeDetails(recipeId);
 
 		if (!recipeDetails) {
-			throw new ApiError(statuses.SERVER_ERROR, "Subscription not found");
+			throw ApiError.ServerError(messages.SUBSCRIPTION_NOT_FOUND);
 		}
 
 		res.status(statuses.OK).json(recipeDetails);

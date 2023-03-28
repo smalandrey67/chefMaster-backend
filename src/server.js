@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 import { mongoConnect } from "./utils/mongoConnect.js";
 import { appConfig } from "./config/app.config.js";
@@ -13,10 +14,15 @@ const HOST = appConfig.HOST;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cors());
-
+app.use(cookieParser());
+app.use(
+	cors({
+		origin: "*",
+		credentials: true,
+		optionSuccessStatus: 200
+	})
+);
 app.use("/api", appRouter);
-
 app.use(errorHandler);
 
 mongoConnect().then(() => {
