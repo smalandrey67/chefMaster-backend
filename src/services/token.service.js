@@ -25,11 +25,12 @@ export const tokenService = {
 	},
 
 	async removeToken(refreshToken) {
-		await TokenModel.deleteOne({ refreshToken });
+		return await TokenModel.deleteOne({ refreshToken });
 	},
 
 	async findToken(refreshToken) {
-		await TokenModel.findOne({ refreshToken });
+		const foundToken = await TokenModel.findOne({ refreshToken });
+		return foundToken;
 	},
 
 	validateAccessToken(accessToken) {

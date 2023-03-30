@@ -18,10 +18,7 @@ export const authService = {
 		const hashedPassword = await bcrypt.hash(password, 3);
 		const createdUser = await UserModel.create({ email, password: hashedPassword });
 
-		const tokens = await manageTokens(createdUser);
-
 		return {
-			...tokens,
 			user: { id: createdUser._id, email: createdUser.email }
 		};
 	},

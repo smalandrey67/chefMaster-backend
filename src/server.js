@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(
 	cors({
-		origin: "*",
+		origin: ["http://localhost:3000", "https://chef-master.vercel.app"],
 		credentials: true,
 		optionSuccessStatus: 200
 	})

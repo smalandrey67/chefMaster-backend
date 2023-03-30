@@ -8,7 +8,6 @@ export const authController = {
 		const { email, password } = req.body;
 		const registrationResult = await authService.registration(email, password);
 
-		res.cookie("refreshToken", registrationResult.refreshToken, refreshTokenCookieOptions);
 		return res.json(registrationResult);
 	},
 
