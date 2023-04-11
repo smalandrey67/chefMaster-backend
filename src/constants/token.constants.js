@@ -1,6 +1,8 @@
 export const refreshTokenCookieOptions = {
-	maxAge: 30 * 24 * 60 * 60 * 60 * 1000,
-	httpOnly: true
+	maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+	httpOnly: true,
+	sameSite: "none",
+	secure: true
 };
 
 export const accessTokenJwtOptions = {

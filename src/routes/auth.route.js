@@ -9,4 +9,6 @@ export const authRoute = (router) => {
 	router.post("/login", catchError(authController.login));
 	router.post("/logout", catchError(authController.logout));
 	router.get("/refresh", catchError(authController.refresh));
+	router.post("/update-email", catchError(authController.updateEmail)); // do a validation that email exist
+	router.post("/update-userName", catchError(authController.updateUserName)); // do a validation that email exist
 };

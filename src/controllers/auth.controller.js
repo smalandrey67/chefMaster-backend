@@ -5,8 +5,8 @@ import { refreshTokenCookieOptions } from "../constants/token.constants.js";
 
 export const authController = {
 	async registration(req, res) {
-		const { email, password } = req.body;
-		const registrationResult = await authService.registration(email, password);
+		const { email, password, userName } = req.body;
+		const registrationResult = await authService.registration(email, password, userName);
 
 		return res.json(registrationResult);
 	},
@@ -34,5 +34,25 @@ export const authController = {
 
 		res.cookie("refreshToken", refreshResult.refreshToken, refreshTokenCookieOptions);
 		return res.json(refreshResult);
+	},
+
+	async updateEmail(req, res) {
+		const { oldEmail, updatedEmail } = req.body;
+		const { refreshToken } = req.cookies;
+
+		const updatedUser = await authService.updateEmail(oldEmail, updatedEmail, refreshToken);
+
+		res.cookie("refreshToken", updatedUser.refreshToken, refreshTokenCookieOptions);
+		return res.json(updatedUser);
+	},
+
+	async updateUserName(req, res) {
+		const { oldUserName, updatedUserName } = req.body;
+		const { refreshToken } = req.cookies;
+
+		const updatedUser = await authService.updateUserName(oldUserName, updatedUserName, refreshToken);
+
+		res.cookie("refreshToken", updatedUser.refreshToken, refreshTokenCookieOptions);
+		return res.json(updatedUser);
 	}
 };
