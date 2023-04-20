@@ -4,44 +4,37 @@ import { ApiError } from "../config/apiError.config.js";
 import { messages } from "../constants/errorMessages.constants.js";
 
 import { manageTokens } from "../utils/manageTokens.js";
-import { UserModel } from "../models/user.model.js";
 import { tokenService } from "./token.service.js";
+import { UserDto } from "../dtos/user.dto.js";
+
+import { UserModel } from "../models/user.model.js";
+import { ViewSettingsModel } from "../models/viewSettings.model.js";
 
 export const authService = {
 	async registration(email, password, userName) {
-		const foundUser = await UserModel.findOne({ email });
-
-		if (foundUser) {
-			throw ApiError.Conflict(messages.EMAIL_ALREADY_EXIST);
-		}
-
 		const hashedPassword = await bcrypt.hash(password, 3);
 		const createdUser = await UserModel.create({ email, password: hashedPassword, userName });
+		const userDto = new UserDto(createdUser);
 
-		return {
-			user: { id: createdUser._id, email: createdUser.email, userName: createdUser.userName, createdAt: createdUser.createdAt }
-		};
+		return { user: userDto };
 	},
 
 	async login(email, password) {
 		const foundUser = await UserModel.findOne({ email });
+		const foundViewSettings = await ViewSettingsModel.find({ _id: foundUser._id });
 
-		if (!foundUser) {
-			throw ApiError.BadRequest(messages.EMAIL_NOT_FOUND);
+		if (!foundViewSettings.length) {
+			await ViewSettingsModel.create({
+				_id: foundUser._id,
+				main: { viewClass: "background: linear-gradient(45deg, var(--dark-10), var(--dark-20))" },
+				navbar: { viewClass: "background: var(--dark-10)" }
+			});
 		}
 
-		const isPasswordEqual = await bcrypt.compare(password, foundUser.password);
+		const userDto = new UserDto(foundUser);
+		const tokens = await manageTokens(userDto);
 
-		if (!isPasswordEqual) {
-			throw ApiError.BadRequest(messages.INCORRECT_PASSWORD);
-		}
-
-		const tokens = await manageTokens(foundUser);
-
-		return {
-			...tokens,
-			user: { id: foundUser._id, email: foundUser.email, userName: foundUser.userName, createdAt: foundUser.createdAt }
-		};
+		return { ...tokens, user: userDto };
 	},
 
 	async logout(refreshToken) {
@@ -61,28 +54,15 @@ export const authService = {
 		}
 
 		const foundUser = await UserModel.findById(decryptedUserData.id);
+		const userDto = new UserDto(foundUser);
+		const tokens = await manageTokens(userDto);
 
-		const tokens = await manageTokens(foundUser);
-
-		return {
-			...tokens,
-			user: { id: foundUser._id, email: foundUser.email, userName: foundUser.userName, createdAt: foundUser.createdAt }
-		};
+		return { ...tokens, user: userDto };
 	},
 
 	async updateEmail(oldEmail, updatedEmail, refreshToken) {
 		if (!refreshToken) {
 			throw ApiError.Unauthorized();
-		}
-
-		if (oldEmail === updatedEmail) {
-			throw ApiError.BadRequest(messages.EMAIL_UPDATE_THE_SAME);
-		}
-
-		const alreadyExistEmail = await UserModel.find({ email: updatedEmail });
-
-		if (alreadyExistEmail.length) {
-			throw ApiError.Conflict(messages.EMAIL_ALREADY_EXIST);
 		}
 
 		const userWithUpdatedEmail = await UserModel.findOneAndUpdate({ email: oldEmail }, { $set: { email: updatedEmail } }, { new: true });
@@ -91,32 +71,15 @@ export const authService = {
 			throw ApiError.BadRequest(messages.EMAIL_NOT_FOUND);
 		}
 
-		const tokens = await manageTokens(userWithUpdatedEmail);
+		const userDto = new UserDto(userWithUpdatedEmail);
+		const tokens = await manageTokens(userDto);
 
-		return {
-			...tokens,
-			user: {
-				id: userWithUpdatedEmail._id,
-				email: userWithUpdatedEmail.email,
-				userName: userWithUpdatedEmail.userName,
-				createdAt: userWithUpdatedEmail.createdAt
-			}
-		};
+		return { ...tokens, user: userDto };
 	},
 
 	async updateUserName(oldUserName, updatedUserName, refreshToken) {
 		if (!refreshToken) {
 			throw ApiError.Unauthorized();
-		}
-
-		if (oldUserName === updatedUserName) {
-			throw ApiError.BadRequest(messages.USER_NAME_UPDATE_THE_SAME);
-		}
-
-		const alreadyExistUserName = await UserModel.find({ userName: updatedUserName });
-
-		if (alreadyExistUserName.length) {
-			throw ApiError.Conflict(messages.USER_NAME_ALREADY_EXIST);
 		}
 
 		const userWithUpdatedName = await UserModel.findOneAndUpdate(
@@ -129,16 +92,9 @@ export const authService = {
 			throw ApiError.BadRequest(messages.USER_NAME_NOT_FOUND);
 		}
 
-		const tokens = await manageTokens(userWithUpdatedName);
+		const userDto = new UserDto(userWithUpdatedName);
+		const tokens = await manageTokens(userDto);
 
-		return {
-			...tokens,
-			user: {
-				id: userWithUpdatedName._id,
-				email: userWithUpdatedName.email,
-				userName: userWithUpdatedName.userName,
-				createdAt: userWithUpdatedName.createdAt
-			}
-		};
+		return { ...tokens, user: userDto };
 	}
 };

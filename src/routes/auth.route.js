@@ -1,14 +1,19 @@
 import { authController } from "../controllers/auth.controller.js";
 import { catchError } from "../utils/catchError.js";
 
-import { authValidation } from "../validations/auth.validation.js";
+import {
+	loginValidation,
+	registrationValidation,
+	updatedEmailValidation,
+	updatedUserNameValidation
+} from "../validations/auth.validation.js";
 import { validationErrors } from "../middleware/validationErrors.middleware.js";
 
 export const authRoute = (router) => {
-	router.post("/registration", authValidation, validationErrors, catchError(authController.registration));
-	router.post("/login", catchError(authController.login));
+	router.post("/registration", registrationValidation, validationErrors, catchError(authController.registration));
+	router.post("/login", loginValidation, validationErrors, catchError(authController.login));
 	router.post("/logout", catchError(authController.logout));
 	router.get("/refresh", catchError(authController.refresh));
-	router.post("/update-email", catchError(authController.updateEmail)); // do a validation that email exist
-	router.post("/update-userName", catchError(authController.updateUserName)); // do a validation that email exist
+	router.post("/update-email", updatedEmailValidation, validationErrors, catchError(authController.updateEmail));
+	router.post("/update-userName", updatedUserNameValidation, validationErrors, catchError(authController.updateUserName));
 };
