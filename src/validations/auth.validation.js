@@ -6,6 +6,7 @@ import { ApiError } from "../config/apiError.config.js";
 import { messages } from "../constants/errorMessages.constants.js";
 
 export const registrationValidation = [
+	body("userName").trim().not().isEmpty().withMessage("Not valid userName"),
 	body("email")
 		.trim()
 		.isEmail()

@@ -2,8 +2,8 @@ import { RecipeModel } from "../models/recipe.model.js";
 import { RecipeDetailsModel } from "../models/recipeDetails.model.js";
 
 export const recipesService = {
-	async getPopularRecipes() {
-		const popularRecipes = await RecipeModel.find({ rating: { $gt: 3.5 } });
+	async getPopularRecipes(limit) {
+		const popularRecipes = await RecipeModel.find({ rating: { $gt: 3.5 } }).limit(limit);
 		return popularRecipes;
 	},
 

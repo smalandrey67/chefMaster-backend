@@ -7,7 +7,6 @@ export const viewSettingsService = {
 	},
 
 	async saveViewSettings(userId, main, navbar) {
-		const savedViewSettings = await ViewSettingsModel.findOneAndUpdate({ _id: userId }, { $set: { main, navbar } }, { new: true });
-		return savedViewSettings;
+		await ViewSettingsModel.findOneAndUpdate({ _id: userId }, { $set: { main, navbar } }, { new: true });
 	}
 };

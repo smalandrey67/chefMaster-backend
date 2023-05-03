@@ -1,7 +1,10 @@
 import jwt from "jsonwebtoken";
 
-import { accessTokenJwtOptions, refreshTokenJwtOptions } from "../constants/token.constants.js";
+import { ApiError } from "../config/apiError.config.js";
 import { appConfig } from "../config/app.config.js";
+
+import { messages } from "../constants/errorMessages.constants.js";
+import { accessTokenJwtOptions, refreshTokenJwtOptions } from "../constants/token.constants.js";
 import { TokenModel } from "../models/token.model.js";
 
 export const tokenService = {
@@ -34,12 +37,20 @@ export const tokenService = {
 	},
 
 	validateAccessToken(accessToken) {
-		const decryptedUserData = jwt.verify(accessToken, appConfig.JWT_ACCESS_KEY);
-		return decryptedUserData;
+		try {
+			const decryptedUserData = jwt.verify(accessToken, appConfig.JWT_ACCESS_KEY);
+			return decryptedUserData;
+		} catch (error) {
+			throw ApiError.Unauthorized(messages.UNAUTHORIZED);
+		}
 	},
 
 	validateRefreshToken(refreshToken) {
-		const decryptedUserData = jwt.verify(refreshToken, appConfig.JWT_REFRESH_KEY);
-		return decryptedUserData;
+		try {
+			const decryptedUserData = jwt.verify(refreshToken, appConfig.JWT_REFRESH_KEY);
+			return decryptedUserData;
+		} catch (error) {
+			throw ApiError.Unauthorized(messages.UNAUTHORIZED);
+		}
 	}
 };

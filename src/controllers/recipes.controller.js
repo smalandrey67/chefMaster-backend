@@ -5,8 +5,10 @@ import { messages } from "../constants/errorMessages.constants.js";
 import { ApiError } from "../config/apiError.config.js";
 
 export const recipesController = {
-	async getPopularRecipes(_, res) {
-		const popularRecipes = await recipesService.getPopularRecipes();
+	async getPopularRecipes(req, res) {
+		const limit = req.query._limit;
+
+		const popularRecipes = await recipesService.getPopularRecipes(limit);
 
 		if (!popularRecipes) {
 			throw ApiError.ServerError(messages.SUBSCRIPTION_NOT_FOUND);
