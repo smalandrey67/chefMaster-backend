@@ -16,6 +16,8 @@ export const authController = {
 		const loginResult = await authService.login(email, password);
 
 		res.cookie("refreshToken", loginResult.refreshToken, refreshTokenCookieOptions);
+		res.cookie("isLoggedIn", true, refreshTokenCookieOptions);
+
 		return res.json(loginResult);
 	},
 
@@ -24,6 +26,8 @@ export const authController = {
 		await authService.logout(refreshToken);
 
 		res.clearCookie("refreshToken");
+		res.clearCookie("isLoggedIn");
+
 		return res.status(statuses.NO_CONTENT).json({});
 	},
 
@@ -33,6 +37,8 @@ export const authController = {
 		const refreshResult = await authService.refresh(refreshToken);
 
 		res.cookie("refreshToken", refreshResult.refreshToken, refreshTokenCookieOptions);
+		res.cookie("isLoggedIn", true, refreshTokenCookieOptions);
+
 		return res.json(refreshResult);
 	},
 
@@ -43,6 +49,8 @@ export const authController = {
 		const updatedUser = await authService.updateEmail(oldEmail, updatedEmail, refreshToken);
 
 		res.cookie("refreshToken", updatedUser.refreshToken, refreshTokenCookieOptions);
+		res.cookie("isLoggedIn", true, refreshTokenCookieOptions);
+
 		return res.json(updatedUser);
 	},
 
@@ -53,6 +61,8 @@ export const authController = {
 		const updatedUser = await authService.updateUserName(oldUserName, updatedUserName, refreshToken);
 
 		res.cookie("refreshToken", updatedUser.refreshToken, refreshTokenCookieOptions);
+		res.cookie("isLoggedIn", true, refreshTokenCookieOptions);
+
 		return res.json(updatedUser);
 	}
 };
