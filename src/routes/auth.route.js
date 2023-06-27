@@ -1,11 +1,13 @@
 import { authController } from "../controllers/auth.controller.js";
 import { catchError } from "../utils/catchError.js";
+import { multerUploader } from "../config/multer.config.js";
 
 import {
 	loginValidation,
 	registrationValidation,
 	updatedEmailValidation,
-	updatedUserNameValidation
+	updatedUserNameValidation,
+	updateAvatarValidation
 } from "../validations/auth.validation.js";
 
 import { validationErrors } from "../middleware/validationErrors.middleware.js";
@@ -18,4 +20,12 @@ export const authRoute = (router) => {
 	router.get("/refresh", catchError(authController.refresh));
 	router.post("/update-email", tokenCheck, updatedEmailValidation, validationErrors, catchError(authController.updateEmail));
 	router.post("/update-userName", tokenCheck, updatedUserNameValidation, validationErrors, catchError(authController.updateUserName));
+	router.post(
+		"/update-avatar",
+		multerUploader.single("avatar"),
+		tokenCheck,
+		updateAvatarValidation,
+		validationErrors,
+		catchError(authController.uploadImage)
+	);
 };

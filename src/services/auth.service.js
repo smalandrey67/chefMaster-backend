@@ -96,5 +96,22 @@ export const authService = {
 		const tokens = await manageTokens(userDto);
 
 		return { ...tokens, user: userDto };
+	},
+
+	async updateAvatar(avatarUrl, userId, refreshToken) {
+		if (!refreshToken) {
+			throw ApiError.Unauthorized();
+		}
+
+		const userWithUpdatedAvatar = await UserModel.findOneAndUpdate({ _id: userId }, { $set: { avatar: avatarUrl } }, { new: true });
+
+		if (!userWithUpdatedAvatar) {
+			throw ApiError.BadRequest(messages.USER_NAME_NOT_FOUND);
+		}
+
+		const userDto = new UserDto(userWithUpdatedAvatar);
+		const tokens = await manageTokens(userDto);
+
+		return { ...tokens, user: userDto };
 	}
 };

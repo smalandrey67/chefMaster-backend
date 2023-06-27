@@ -1,5 +1,5 @@
-import { body } from "express-validator";
 import bcrypt from "bcrypt";
+import { body } from "express-validator";
 
 import { UserModel } from "../models/user.model.js";
 import { ApiError } from "../config/apiError.config.js";
@@ -96,3 +96,5 @@ export const updatedUserNameValidation = [
 			}
 		})
 ];
+
+export const updateAvatarValidation = [body("userId").trim().not().isEmpty().withMessage("userId is required")];

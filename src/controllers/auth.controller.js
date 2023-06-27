@@ -1,7 +1,10 @@
+import { ApiError } from "../config/apiError.config.js";
 import { authService } from "../services/auth.service.js";
 
 import { statuses } from "../constants/httpStatuses.constants.js";
 import { refreshTokenCookieOptions } from "../constants/token.constants.js";
+
+import cloudinary from "../config/cloudinary.config.js";
 
 export const authController = {
 	async registration(req, res) {
@@ -16,7 +19,6 @@ export const authController = {
 		const loginResult = await authService.login(email, password);
 
 		res.cookie("refreshToken", loginResult.refreshToken, refreshTokenCookieOptions);
-		res.cookie("isLoggedIn", true, refreshTokenCookieOptions);
 
 		return res.json(loginResult);
 	},
@@ -37,7 +39,6 @@ export const authController = {
 		const refreshResult = await authService.refresh(refreshToken);
 
 		res.cookie("refreshToken", refreshResult.refreshToken, refreshTokenCookieOptions);
-		res.cookie("isLoggedIn", true, refreshTokenCookieOptions);
 
 		return res.json(refreshResult);
 	},
@@ -49,7 +50,6 @@ export const authController = {
 		const updatedUser = await authService.updateEmail(oldEmail, updatedEmail, refreshToken);
 
 		res.cookie("refreshToken", updatedUser.refreshToken, refreshTokenCookieOptions);
-		res.cookie("isLoggedIn", true, refreshTokenCookieOptions);
 
 		return res.json(updatedUser);
 	},
@@ -61,8 +61,22 @@ export const authController = {
 		const updatedUser = await authService.updateUserName(oldUserName, updatedUserName, refreshToken);
 
 		res.cookie("refreshToken", updatedUser.refreshToken, refreshTokenCookieOptions);
-		res.cookie("isLoggedIn", true, refreshTokenCookieOptions);
 
 		return res.json(updatedUser);
+	},
+
+	async uploadImage(req, res) {
+		const { userId } = req.body;
+		const { refreshToken } = req.cookies;
+
+		if (req.fileValidationError) {
+			throw ApiError.BadRequest(req.fileValidationError);
+		}
+
+		const uploadedAvatar = await cloudinary.uploader.upload(req.file.path);
+		const updatedAvatar = await authService.updateAvatar(uploadedAvatar.secure_url, userId, refreshToken);
+
+		res.cookie("refreshToken", updatedAvatar.refreshToken, refreshTokenCookieOptions);
+		return res.json(updatedAvatar);
 	}
 };
