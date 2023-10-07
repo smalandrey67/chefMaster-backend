@@ -16,6 +16,20 @@ export const viewSettingsService = {
 			throw ApiError.Unauthorized();
 		}
 
-		await ViewSettingsModel.findOneAndUpdate({ _id: userId }, { $set: { main, navbar } }, { new: true });
+		const savedViewSettings = await ViewSettingsModel.findOneAndUpdate({ _id: userId }, { $set: { main, navbar } }, { new: true });
+		return savedViewSettings;
+	},
+
+	async resetViewSettings(refreshToken, userId) {
+		if (!refreshToken) {
+			throw ApiError.Unauthorized();
+		}
+
+		const defaultViewSettings = await ViewSettingsModel.findOneAndUpdate(
+			{ _id: userId },
+			{ $set: { main: { background: "linear-gradient(45deg, #212121, #282828)" }, navbar: { background: "#212121" } } },
+			{ new: true }
+		);
+		return defaultViewSettings;
 	}
 };

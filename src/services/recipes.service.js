@@ -1,5 +1,4 @@
-import { RecipeModel } from "../models/recipe.model.js";
-import { RecipeDetailsModel } from "../models/recipeDetails.model.js";
+import { RecipeModel, RecipeDetailsModel } from "../models/recipe.model.js";
 
 export const recipesService = {
 	async getPopularRecipes(limit) {

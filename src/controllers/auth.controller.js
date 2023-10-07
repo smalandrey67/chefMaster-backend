@@ -65,7 +65,7 @@ export const authController = {
 		return res.json(updatedUser);
 	},
 
-	async uploadImage(req, res) {
+	async updateAvatar(req, res) {
 		const { userId } = req.body;
 		const { refreshToken } = req.cookies;
 
@@ -77,6 +77,7 @@ export const authController = {
 		const updatedAvatar = await authService.updateAvatar(uploadedAvatar.secure_url, userId, refreshToken);
 
 		res.cookie("refreshToken", updatedAvatar.refreshToken, refreshTokenCookieOptions);
+
 		return res.json(updatedAvatar);
 	}
 };

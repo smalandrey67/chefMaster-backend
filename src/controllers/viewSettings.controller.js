@@ -16,8 +16,17 @@ export const viewSettingsController = {
 		const userId = req.params.userId;
 		const { main, navbar } = req.body;
 
-		const viewSettings = await viewSettingsService.saveViewSettings(refreshToken, userId, main, navbar);
+		const savedViewSettings = await viewSettingsService.saveViewSettings(refreshToken, userId, main, navbar);
 
-		res.status(statuses.OK).json(viewSettings);
+		res.status(statuses.OK).json(savedViewSettings);
+	},
+
+	async resetViewSettings(req, res) {
+		const { refreshToken } = req.cookies;
+		const userId = req.params.userId;
+
+		const defaultViewSettings = await viewSettingsService.resetViewSettings(refreshToken, userId);
+
+		res.status(statuses.OK).json(defaultViewSettings);
 	}
 };

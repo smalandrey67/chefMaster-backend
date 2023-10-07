@@ -26,6 +26,6 @@ export const authRoute = (router) => {
 		tokenCheck,
 		updateAvatarValidation,
 		validationErrors,
-		catchError(authController.uploadImage)
+		catchError(authController.updateAvatar)
 	);
 };
